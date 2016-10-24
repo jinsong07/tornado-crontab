@@ -2,13 +2,13 @@ import functools
 import logging
 import math
 import os
-
+import time
 from crontab import CronTab
 from tornado.ioloop import PeriodicCallback
 
 
 log_crontab = logging.getLogger("tornado-crontab.crontab")
-FORMAT_LOG_CRONTAB = " ".join(["tornado-crontab[%(pid)d]:",
+FORMAT_LOG_CRONTAB = " ".join(["(%(asctime)s)""tornado-crontab[%(pid)d]:",
                                "(%(user)s)",
                                "FUNC",
                                "(%(funcname)s",
@@ -57,9 +57,9 @@ class CronTabCallback(PeriodicCallback):
         if self._running and log_crontab.isEnabledFor(level):
 
             _func, _args, _kwargs = self._get_func_spec()
-
+            time_ = time.localtime()
             log_crontab.log(level,
-                            FORMAT_LOG_CRONTAB % dict(pid=self.pid,
+                            FORMAT_LOG_CRONTAB % dict(asctime=time.asctime(time_),pid=self.pid,
                                                       user=self.user,
                                                       funcname=_func.__name__,
                                                       args=_args,
